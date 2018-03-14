@@ -33,7 +33,7 @@ class App extends Component {
       console.log("Food map loaded: " + foodMap);
       this.setState({
         loading: false,
-        foodSuggestions: foodMap
+        foodSuggestions: JSON.parse(foodMap)
       });
       socket.on('foodSuggestionAdded', newFoodSuggestion => this.addNewFoodSuggestion(newFoodSuggestion))
     });
