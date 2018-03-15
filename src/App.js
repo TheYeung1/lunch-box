@@ -7,9 +7,20 @@ const socket = openSocket('http://localhost:8000');
 
 
 class FoodSuggestion extends Component {
+  constructor(props) {
+    super(props);
+    this.state = props;
+
+    this.voteFoodSuggestion = this.voteFoodSuggestion.bind(this);
+  }
+
+  voteFoodSuggestion() {
+    socket.emit('voteFoodSuggestion', this.state.food)
+  }
+
   render() {
     return(
-      <div>{this.props.food} {this.props.votes}</div>
+      <div>{this.props.food} {this.props.votes} <button onClick={this.voteFoodSuggestion}>+1</button></div>
     );
   }
 }
@@ -35,15 +46,16 @@ class App extends Component {
         loading: false,
         foodSuggestions: JSON.parse(foodMap)
       });
-      socket.on('foodSuggestionAdded', newFoodSuggestion => this.addNewFoodSuggestion(newFoodSuggestion))
+      socket.on('foodSuggestionAdded', newFoodSuggestion => this.putSuggestion(newFoodSuggestion))
+      socket.on('foodSuggestionUpdated', updatedFoodSuggestion => this.putSuggestion(updatedFoodSuggestion))
     });
     socket.emit('newConnection');
   }
 
-  addNewFoodSuggestion(foodSuggestion) {
-    console.log(foodSuggestion);
+  putSuggestion(suggestion) {
+    console.log(suggestion);
     let foodSuggestions = Object.assign({}, this.state.foodSuggestions);
-    foodSuggestions[foodSuggestion.food] = foodSuggestion.votes;
+    foodSuggestions[suggestion.food] = suggestion.votes;
     this.setState({
       foodSuggestions: foodSuggestions
     });

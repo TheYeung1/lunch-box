@@ -20,6 +20,7 @@ io.on('connection', (client) => {
         io.emit('foodSuggestionAdded', {food: suggestion, votes: votes})
     });
     client.on('voteFoodSuggestion', (suggestion) => {
+        console.log('Vote for ' + suggestion)
         let votes = foodMap[suggestion];
         votes = votes + 1;
         foodMap[suggestion] = votes;
