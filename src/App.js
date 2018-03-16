@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
 import openSocket from 'socket.io-client';
+import 'bulma/css/bulma.css';
 
 const socket = openSocket('http://localhost:8000');
 
@@ -19,8 +18,20 @@ class FoodSuggestion extends Component {
   }
 
   render() {
+    const voteText = this.props.votes.toString() + ' vote' + (this.props.votes > 1 ? 's' : '');
+
     return(
-      <div>{this.props.food} {this.props.votes} <button onClick={this.voteFoodSuggestion}>+1</button></div>
+      <div class="column is-one-third-widescreen is-one-quarter-fullhd is-half-desktop is-half-tablet is-three-quarters-mobile">
+        <div class="card">
+          <div class="card-header">
+            <p class="card-header-title">{this.props.food}</p>
+          </div>
+          <div class="card-content">
+            <p>{voteText}</p>
+            <button class="button is-small" onClick={this.voteFoodSuggestion}>+1</button>
+          </div>
+        </div>
+      </div>
     );
   }
 }
@@ -87,17 +98,20 @@ class App extends Component {
           <FoodSuggestion
             food={suggestion[0]}
             votes={suggestion[1]} 
+            key={i}
           />
       );
     });
     
 
     return (
-      <div>
+      <div class="container is-widescreen control">
         <form onSubmit={this.handleEnterNewFoodSuggestion}>
-          <input onChange={this.handleInputFoodSuggestion} value={this.state.currentInputFoodSuggestion}></input>
+          <input class="input" placeholder="Suggest something!" onChange={this.handleInputFoodSuggestion} value={this.state.currentInputFoodSuggestion}></input>
         </form>
-        {foodSuggestions}
+        <div class="columns is-multiline is-mobile">
+          {foodSuggestions}
+        </div>
       </div>
     );
   }
