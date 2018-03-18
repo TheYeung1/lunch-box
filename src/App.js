@@ -43,7 +43,8 @@ class App extends Component {
     this.state = {
       loading: true,
       foodSuggestions: null,
-      currentInputFoodSuggestion: ''
+      currentInputFoodSuggestion: '',
+      location: null
     };
 
     this.handleEnterNewFoodSuggestion = this.handleEnterNewFoodSuggestion.bind(this);
@@ -59,6 +60,11 @@ class App extends Component {
       });
       socket.on('foodSuggestionAdded', newFoodSuggestion => this.putSuggestion(newFoodSuggestion))
       socket.on('foodSuggestionUpdated', updatedFoodSuggestion => this.putSuggestion(updatedFoodSuggestion))
+    });
+    navigator.geolocation.getCurrentPosition(function(position){
+      this.setState({
+        location: {latitude: position.coords.latitude, longitude: position.coords.longitude}
+      });
     });
     socket.emit('newConnection');
   }
@@ -105,14 +111,16 @@ class App extends Component {
     
 
     return (
-      <div class="container is-widescreen control">
-        <form onSubmit={this.handleEnterNewFoodSuggestion}>
-          <input class="input" placeholder="Suggest something!" onChange={this.handleInputFoodSuggestion} value={this.state.currentInputFoodSuggestion}></input>
-        </form>
-        <div class="columns is-multiline is-mobile">
-          {foodSuggestions}
+      <section class="section">
+        <div class="container is-widescreen control">
+          <form onSubmit={this.handleEnterNewFoodSuggestion}>
+            <input class="input" placeholder="Suggest something!" onChange={this.handleInputFoodSuggestion} value={this.state.currentInputFoodSuggestion}></input>
+          </form>
+          <div class="columns is-multiline is-mobile">
+            {foodSuggestions}
+          </div>
         </div>
-      </div>
+      </section>
     );
   }
 }
