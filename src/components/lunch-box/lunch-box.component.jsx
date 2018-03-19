@@ -21,6 +21,14 @@ class LunchBoxComponent extends Component {
   }
 
   componentWillMount() {
+    const setLocation = position => {
+      this.setState({
+        location: {latitude: position.coords.latitude, longitude: position.coords.longitude}
+      });
+    }
+
+    const boundSetLocation = setLocation.bind(this);
+
     this.socket.on('latestFoodMap', foodMap => {
       console.log("Food map loaded: " + foodMap);
       this.setState({
@@ -31,9 +39,7 @@ class LunchBoxComponent extends Component {
       this.socket.on('foodSuggestionUpdated', updatedFoodSuggestion => this.putSuggestion(updatedFoodSuggestion))
     });
     navigator.geolocation.getCurrentPosition(function(position){
-      this.setState({
-        location: {latitude: position.coords.latitude, longitude: position.coords.longitude}
-      });
+      boundSetLocation(position);
     });
     this.socket.emit('newConnection');
   }
