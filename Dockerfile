@@ -1,3 +1,11 @@
-FROM kyma/docker-nginx
-COPY dist/ /var/www/
-CMD 'nginx'
+FROM node:carbon as build-deps
+WORKDIR /usr/src/app
+COPY package*.json ./
+RUN npm install
+COPY . ./
+RUN npm build
+
+FROM nginx:1.12-alpine
+COPY --from=build-deps /usr/src/app/build /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
